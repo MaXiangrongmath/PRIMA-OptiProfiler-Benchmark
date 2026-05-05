@@ -36,3 +36,4 @@ Users can download the official toolkit from its official repository  https://gi
 2. Place the downloaded **PRIMA** and **OptiProfiler** folders in **the same parent directory** as this repository folder.
 3. Add all related folders to the MATLAB search path.
 4. Run the corresponding test scripts directly and all experimental processes and results can be reproduced.
+⚠️ This experiment is run on Ubuntu 24.04 with MATLAB R2025. Running the benchmark scripts may cause MATLAB to crash, and I have not found a solution to this issue. If you have any suggestions or solutions, please feel free to contact me.
