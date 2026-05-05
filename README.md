@@ -1,6 +1,5 @@
 # PRIMA-OptiProfiler-Benchmark
 # README.md
-# PRIMA Precision Benchmark with OptiProfiler
 
 ## Repository Overview
 This repository stores all files for the numerical optimization assignment, including **complete test codes, experimental reports, and original test results**.
