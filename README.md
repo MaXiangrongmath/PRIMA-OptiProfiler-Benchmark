@@ -2,7 +2,7 @@
 # README.md
 
 ## Repository Overview
-This repository stores all files for the numerical optimization assignment, including **complete test codes, experimental reports, and original test results**.
+This is a numerical experiment that benchmarks the PRIMA solver based on the OptiProfiler platform. The repository stores all files for the numerical optimization assignment, including **complete test codes, experimental reports, and original test results**.
 
 ## Repository Contents
 - Test codes: MATLAB solver functions and benchmark scripts for two groups of comparison tests.
