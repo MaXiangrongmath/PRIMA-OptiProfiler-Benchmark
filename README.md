@@ -12,11 +12,10 @@ A systematic numerical experiment repository evaluating the PRIMA derivative-fre
 ## Test Content
 ### Task 1: Dimensionality and Constraint Testing (Chained Rosenbrock)
 This task evaluates how PRIMA dynamically handles different constraints and scales with problem dimensionality. We minimize the chained Rosenbrock function under four scenarios:
-1. **Unconstrained** (Triggers `UOBYQA` or `NEWUOA`)
-2. **Bound-constrained**: $x \le 0$ (Triggers `BOBYQA`)
-3. **Linearly-constrained**: $\sum x \le 1, x \ge 0$ (Triggers `LINCOA`)
-4. **Nonlinearly-constrained**: $\sum x^2 \le 1, x \ge 0$ (Triggers `COBYLA`)
-
+1. **Unconstrained** 
+2. **Bound-constrained**: $x \le 0$ 
+3. **Linearly-constrained**: $\sum x \le 1, x \ge 0$
+4. **Nonlinearly-constrained**: $\sum x^2 \le 1, x \ge 0$
 Each scenario is tested across three spatial dimensions: $n = 5, 10,$ and $20$.
 
 ### Task 2: Precision Benchmarking with OptiProfiler
