@@ -2,7 +2,7 @@
 # README.md
 
 ## Repository Overview
-This is a numerical experiment that benchmarks the PRIMA solver based on the OptiProfiler platform. The repository stores all files for the numerical optimization assignment, including **complete test codes, experimental reports, and original test results**.
+A systematic numerical experiment repository evaluating the PRIMA derivative-free optimization solver across varying dimensions, constraints, and floating-point precisions.
 
 ## Repository Contents
 - Test codes: MATLAB solver functions and benchmark scripts for two groups of comparison tests.
@@ -10,18 +10,24 @@ This is a numerical experiment that benchmarks the PRIMA solver based on the Opt
 - Test results: Automatically generated output folders containing performance figures, log files and statistical data.
 
 ## Test Content
-Two independent comparison tests are implemented:
-1. **Test 1**: Performance comparison between `single-precision` and `double-precision` based on the PRIMA solver.
-2. **Test 2**: Performance comparison between `double-precision` and `quadruple-precision` based on the PRIMA solver.
+### Task 1: Dimensionality and Constraint Testing (Chained Rosenbrock)
+This task evaluates how PRIMA dynamically handles different constraints and scales with problem dimensionality. We minimize the chained Rosenbrock function under four scenarios:
+1. **Unconstrained** (Triggers `UOBYQA` or `NEWUOA`)
+2. **Bound-constrained**: $x \le 0$ (Triggers `BOBYQA`)
+3. **Linearly-constrained**: $\sum x \le 1, x \ge 0$ (Triggers `LINCOA`)
+4. **Nonlinearly-constrained**: $\sum x^2 \le 1, x \ge 0$ (Triggers `COBYLA`)
 
-Both tests adopt two benchmark problem features:
-- `plain`: Standard optimization problems without any perturbation.
-- `noisy`: Optimization problems with random noise added to the objective function, used to test solver robustness.
+Each scenario is tested across three spatial dimensions: $n = 5, 10,$ and $20$.
 
-## Testing Method
-All experiments are conducted on the **OptiProfiler benchmark platform**.
-Solvers are evaluated on optimization problems with dimensions from 2 to 20, covering unconstrained, bound-constrained, linearly constrained and nonlinearly constrained (`ubln`) cases. The performance and robustness of solvers under different precision levels are compared and analyzed.
+### Task 2: Precision Benchmarking with OptiProfiler
+This task benchmarks the efficiency of PRIMA under different internal floating-point precisions using the OptiProfiler framework. Solvers are evaluated on `ubln` optimization problems (dimensions 2 to 20).
+- **Comparison Group 1**: `single-precision` vs. `double-precision`.
+- **Comparison Group 2**: `double-precision` vs. `quadruple-precision`.
 
+Both groups are evaluated under two distinct feature sets:
+- `plain`: Standard deterministic optimization problems without any perturbation.
+- `noisy`: Problems with random Gaussian noise added to the objective function, designed to test the solver's robustness and fault tolerance.
+  
 ## Source and Acquisition of Dependencies
 ### PRIMA
 PRIMA is a derivative-free optimization solver for solving optimization problems.
