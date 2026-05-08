@@ -7,7 +7,7 @@ A systematic numerical experiment repository evaluating the PRIMA derivative-fre
 ## Repository Contents
 - Test codes: MATLAB solver functions and benchmark scripts for two groups of comparison tests.
 - Experimental report: Formal experimental description, result analysis and summary.
-- Test results: Automatically generated output folders containing performance figures, log files and statistical data.
+- Test results: Automatically generated output figures.
 
 ## Test Content
 ### Task 1: Dimensionality and Constraint Testing (Chained Rosenbrock)
