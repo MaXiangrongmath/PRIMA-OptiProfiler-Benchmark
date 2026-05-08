@@ -16,6 +16,7 @@ This task evaluates how PRIMA dynamically handles different constraints and scal
 2. **Bound-constrained**: $x \le 0$ 
 3. **Linearly-constrained**: $\sum x \le 1, x \ge 0$
 4. **Nonlinearly-constrained**: $\sum x^2 \le 1, x \ge 0$
+5. 
 Each scenario is tested across three spatial dimensions: $n = 5, 10,$ and $20$.
 
 ### Task 2: Precision Benchmarking with OptiProfiler
