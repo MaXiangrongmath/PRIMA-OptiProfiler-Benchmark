@@ -1,0 +1,158 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[capitalize]{cleveref}
+
+% --- Page Geometry ---
+\geometry{margin=1in}
+
+% --- Code Styling ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=Matlab
+}
+
+% --- Title Information ---
+\title{\textbf{Numerical Optimization Lab Report: Benchmarking the PRIMA Solver}}
+\author{Ma Xiangrong}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report summarizes the numerical experiments conducted on the PRIMA (Reference Implementation for Powell's Methods with Augmentation) solver. The study is divided into two primary tasks. First, evaluating the solver's performance on the chained Rosenbrock function with varying dimensions and constraint types. Second, benchmarking the solver's efficiency across different floating-point precisions (Single, Double, and Quadruple) using OptiProfiler under both plain and noisy conditions. Technical challenges regarding local environment compatibility were addressed by migrating the benchmarking process to a high-performance server.
+\end{abstract}
+
+\section{Introduction and Preparatory Work}
+The objective of this lab is to explore the capabilities of the PRIMA package, which implements Derivative-Free Optimization (DFO) algorithms originally developed by Professor M. J. D. Powell. The preparatory phase involved setting up the MATLAB environment, compiling the MEX files for the PRIMA solver, and verifying the path configurations. 
+\section{Task 1: Testing on the Chained Rosenbrock Function }
+In this section, we minimize the chained Rosenbrock function 
+\[ 
+f\left(\mathbf{x}\right)=\sum_{i=1}^{N-1}100\left(x_{i}-x_{i-1}^{2}\right)^{2}+\left(1-x_{i-1}\right)^{2}.
+\]
+under four different constraint scenarios including unconstrained, bound constraints, linear constraints and nonlinear constraints. The experiments were performed for dimensions $n = 5$, $10$, and $20$.
+
+\subsection{Numerical Results}
+The results, including the final objective function value ($f(x)$) and the total number of function evaluations (\texttt{FuncCount}), are summarized in Table \ref{tab:rosenbrock}.
+
+\begin{table}[H]
+\centering
+\caption{Performance of PRIMA on the Chained Rosenbrock Function}
+\label{tab:rosenbrock}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+\textbf{Dim ($n$)} & \textbf{Constraint Type} & \textbf{Algorithm} & \textbf{Final $f(x)$} & \textbf{FuncCount} \\ \midrule
+5 & Unconstrained & UOBYQA & $8.28 \times 10^{-16}$ & 345 \\
+  & Bound ($x \le 0$) & BOBYQA & 4.0000 & 88 \\
+  & Linear ($\sum x \le 1, x \ge 0$) & LINCOA & 2.4316 & 71 \\
+  & Nonlinear ($\sum x^2 \le 1, x \ge 0$) & COBYLA & 1.5031 & 384 \\ \midrule
+10 & Unconstrained & NEWUOA & $6.70 \times 10^{-11}$ & 977 \\
+   & Bound ($x \le 0$) & BOBYQA & 9.0000 & 177 \\
+   & Linear ($\sum x \le 1, x \ge 0$) & LINCOA & 7.5947 & 179 \\
+   & Nonlinear ($\sum x^2 \le 1, x \ge 0$) & COBYLA & 6.4268 & 700 \\ \midrule
+20 & Unconstrained & NEWUOA & $1.81 \times 10^{-11}$ & 2832 \\
+   & Bound ($x \le 0$) & BOBYQA & 19.0000 & 436 \\
+   & Linear ($\sum x \le 1, x \ge 0$) & LINCOA & 17.4153 & 353 \\
+   & Nonlinear ($\sum x^2 \le 1, x \ge 0$) & COBYLA & 16.3273 & 1829 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Observation}
+As the dimension $n$ increases, the number of function evaluations grows significantly, particularly for the unconstrained and nonlinear constraint cases. This highlights the typical computational cost scaling in derivative-free optimization methods. Across all test cases, the solver successfully terminated with the message indicating that the trust-region radius reached its lower bound, confirming that the algorithms successfully converged within the specified tolerances.
+
+\section{Task 2: Precision Benchmarking with OptiProfiler }
+
+\subsection{Experimental Setup and Challenges}
+We originally started testing on a local computer running Ubuntu 24.04 and MATLAB R2025b. However, we ran into a major roadblock, whenever we tried to test single or quadruple precision, MATLAB would completely crash and close itself. To be practical and ensure our tests could run smoothly without interruption, we moved the entire experiment to a stable, dedicated computing server. This solved the compatibility issues and allowed the tests to finish successfully.
+
+We benchmarked the solvers on the \texttt{ubln} problem suite (Unconstrained, Bound, Linearly, and Nonlinearly constrained problems). Because optimization algorithms can take a very long time to solve massive problems, we kept things reasonable by only testing problems that had between $n = 2$ and $n = 20$ dimensions.
+
+\subsection{Results and Analysis}
+The solvers were tested under two scenarios: a deterministic \texttt{plain} feature and a \texttt{noisy} feature.
+
+\subsubsection{Test 1: Double vs. Single Precision}
+Table \ref{tab:scores1} summarizes the solver scores calculated by OptiProfiler.
+
+\begin{table}[H]
+    \centering
+    \caption{Normalized Solver Scores (Double vs. Single)}
+    \label{tab:scores1}
+    \begin{tabular}{lcc}
+        \toprule
+        Feature & \textbf{prima\_double} & \textbf{prima\_single} \\
+        \midrule
+        \textit{Plain} & 1.0000 & 0.8375 \\
+        \textit{Noisy} & 1.0000 & 0.9312 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+In the \textit{plain} case, Double precision shows a significant advantage(Fig.\ref{fig:Test1 with plain}). However, in the \textit{noisy} case, the gap narrows significantly(Fig.\ref{fig:Test1 with noisy}). This suggests that when external noise is present, the higher precision of the \textit{Double} solver becomes less of a differentiator because the noise itself limits the accuracy of the function values regardless of the storage format.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth, page=1]{summary_prima_double_prima_single_ubln_2_20_0_10_plain_20260505_204115}
+    \caption{Test1 with plain}
+    \label{fig:Test1 with plain}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth, page=1]{summary_prima_double_prima_single_ubln_2_20_0_10_noisy_0.001_mixed_gaussian_20260505_222745}
+    \caption{Test1 with noisy}
+    \label{fig:Test1 with noisy}
+\end{figure}
+
+\subsubsection{Test 2: Double vs. Quadruple Precision}
+The results for Test 2 revealed a noteworthy phenomenon that the curves for \textbf{prima\_double} and \textbf{prima\_quadruple} were perfectly overlapping in both \textit{plain} and \textit{noisy} features(Fig.\ref{fig:Test2 with plain} and Fig.\ref{fig:Test2 with noisy}). The scores were identical (1.0 vs. 1.0). This implies that for problems with dimensions up to 20, Double precision is sufficient to capture all meaningful information required by the trust-region subproblems of PRIMA.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth, page=1]{summary_prima_double_prima_quadruple_ubln_2_20_0_10_plain_20260505_225956}
+    \caption{Test2 with plain}
+    \label{fig:Test2 with plain}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth, page=1]{summary_prima_double_prima_quadruple_ubln_2_20_0_10_noisy_0.001_mixed_gaussian_20260506_003832}
+    \caption{Test2 with noisy}
+    \label{fig:Test2 with noisy}
+\end{figure}
+
+\section{Conclusion}
+The experiments demonstrate that the PRIMA solver is robust across various constraint types and dimensional scales. For standard scientific computing, double precision remains the optimal choice. However, single precision is a highly viable alternative in environments heavily polluted by noise. 
+
+\end{document}
